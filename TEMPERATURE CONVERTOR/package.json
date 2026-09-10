@@ -1,0 +1,21 @@
+{
+  "name": "temperature-converter",
+  "version": "1.0.0",
+  "description": "Modern Real-Time Temperature Converter & Visualizer Suite",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "temperature-converter",
+    "celsius",
+    "fahrenheit",
+    "kelvin",
+    "science",
+    "calculator",
+    "glassmorphism",
+    "javascript"
+  ],
+  "author": "TempFlux Contributors",
+  "license": "MIT"
+}

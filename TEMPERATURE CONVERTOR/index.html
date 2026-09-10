@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TempFlux — Modern Real-Time Temperature Converter & Visualizer</title>
+  
+  <!-- SEO & Meta Info -->
+  <meta name="description" content="An ultra-modern, interactive temperature converter supporting Celsius, Fahrenheit, Kelvin, Rankine, Reaumur, Newton, and Delisle scales with real-time visual thermometer, formula breakdown, presets, and history tracking.">
+  <meta name="keywords" content="temperature converter, celsius to fahrenheit, kelvin converter, rankine, temperature calculator, interactive thermometer, web app">
+  <meta name="author" content="GitHub Showcase Project">
+  <meta name="theme-color" content="#0d1117">
+
+  <!-- Open Graph / Social Media Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TempFlux — Modern Temperature Converter">
+  <meta property="og:description" content="Interactive multi-scale temperature converter with live visual thermometer, step-by-step formula explanations, presets, and historical logging.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1590055531615-f16d36ffe8ec?auto=format&fit=crop&w=1200&q=80">
+  
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Favicon (SVG data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌡️</text></svg>">
+</head>
+<body>
+  <!-- Ambient Animated Background Glowing Orbs -->
+  <div class="ambient-glow orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow orb-2" aria-hidden="true"></div>
+  <div class="ambient-glow orb-3" aria-hidden="true"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-wrapper">
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-badge">
+          <span class="logo-icon">🌡️</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Temp<span class="highlight">Flux</span></h1>
+          <p class="brand-tagline">Scientific & Everyday Temperature Suite</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sound Effect Toggle -->
+        <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
+          <span class="btn-icon" id="sound-icon">🔊</span>
+        </button>
+
+        <!-- Theme Switcher -->
+        <div class="theme-dropdown-wrapper">
+          <button id="theme-btn" class="icon-btn theme-toggle-btn" title="Change Theme" aria-label="Change Color Theme">
+            <span class="btn-icon" id="theme-icon">🌙</span>
+            <span class="theme-label" id="current-theme-name">Dark</span>
+          </button>
+          <div class="theme-menu" id="theme-menu" role="menu">
+            <button class="theme-option active" data-theme="dark" role="menuitem">
+              <span>🌙 Dark Midnight</span>
+            </button>
+            <button class="theme-option" data-theme="light" role="menuitem">
+              <span>☀️ Crisp Daylight</span>
+            </button>
+            <button class="theme-option" data-theme="neon" role="menuitem">
+              <span>⚡ Cyberpunk Neon</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- GitHub Repository Link -->
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="github-link-btn" title="View Source on GitHub">
+          <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+          </svg>
+          <span class="desktop-only">GitHub</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Application Grid -->
+    <main class="main-layout">
+      <!-- Left Column: Primary Conversion Engine & Controls -->
+      <section class="converter-core-section glass-panel">
+        
+        <!-- Controls Top Bar: Precision & Quick Actions -->
+        <div class="panel-header">
+          <div class="section-title-wrap">
+            <h2 class="section-heading">Instant Converter</h2>
+            <span class="live-pulse-badge"><span class="pulse-dot"></span> Live Sync</span>
+          </div>
+
+          <div class="precision-control">
+            <label for="decimal-select" class="precision-label">Precision:</label>
+            <select id="decimal-select" class="custom-select-small" aria-label="Decimal Precision">
+              <option value="0">0 decimals</option>
+              <option value="1">1 decimal</option>
+              <option value="2" selected>2 decimals</option>
+              <option value="3">3 decimals</option>
+              <option value="4">4 decimals</option>
+              <option value="6">6 decimals</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Two-Way Interactive Conversion Form -->
+        <div class="conversion-interface">
+          <!-- Input Card (From) -->
+          <div class="unit-card from-card" id="from-card-container">
+            <div class="unit-card-header">
+              <span class="unit-direction-label">FROM</span>
+              <span class="active-unit-symbol" id="from-unit-symbol">°C</span>
+            </div>
+
+            <div class="input-field-wrapper">
+              <input 
+                type="number" 
+                id="from-value" 
+                class="temp-input-main" 
+                value="25" 
+                step="any" 
+                placeholder="Enter value..."
+                aria-label="Temperature value to convert"
+                autocomplete="off"
+              >
+              <button id="clear-input-btn" class="clear-input-btn" title="Clear input (Ctrl+K)" aria-label="Clear input value">×</button>
+            </div>
+
+            <div class="select-wrapper">
+              <select id="from-unit" class="unit-dropdown" aria-label="Source temperature scale">
+                <option value="celsius" selected>Celsius (°C)</option>
+                <option value="fahrenheit">Fahrenheit (°F)</option>
+                <option value="kelvin">Kelvin (K)</option>
+                <option value="rankine">Rankine (°R)</option>
+                <option value="reaumur">Réaumur (°Ré)</option>
+                <option value="newton">Newton (°N)</option>
+                <option value="delisle">Delisle (°De)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Swap Unit Button Animation Trigger -->
+          <div class="swap-action-container">
+            <button id="swap-units-btn" class="swap-btn" title="Swap Units (Key: S)" aria-label="Swap Source and Destination Units">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Output Card (To) -->
+          <div class="unit-card to-card" id="to-card-container">
+            <div class="unit-card-header">
+              <span class="unit-direction-label">TO</span>
+              <span class="active-unit-symbol" id="to-unit-symbol">°F</span>
+            </div>
+
+            <div class="output-field-wrapper">
+              <div class="temp-output-display" id="to-value-display">
+                <span class="output-number" id="result-value">77.00</span>
+                <span class="output-unit-tag" id="result-unit-tag">°F</span>
+              </div>
+              <button id="copy-result-btn" class="copy-btn" title="Copy result to clipboard" aria-label="Copy result">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="select-wrapper">
+              <select id="to-unit" class="unit-dropdown" aria-label="Target temperature scale">
+                <option value="celsius">Celsius (°C)</option>
+                <option value="fahrenheit" selected>Fahrenheit (°F)</option>
+                <option value="kelvin">Kelvin (K)</option>
+                <option value="rankine">Rankine (°R)</option>
+                <option value="reaumur">Réaumur (°Ré)</option>
+                <option value="newton">Newton (°N)</option>
+                <option value="delisle">Delisle (°De)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Increments / Fine Tuning Slider -->
+        <div class="slider-controls-group">
+          <div class="slider-meta">
+            <span class="slider-caption">Quick Temperature Adjuster:</span>
+            <span class="slider-current-badge" id="slider-badge">25 °C</span>
+          </div>
+          <div class="range-wrapper">
+            <input 
+              type="range" 
+              id="temp-range-slider" 
+              class="custom-range" 
+              min="-100" 
+              max="200" 
+              value="25" 
+              step="1"
+              aria-label="Temperature slider control"
+            >
+          </div>
+          <div class="range-markers">
+            <button class="step-chip" data-step="-10">-10</button>
+            <button class="step-chip" data-step="-1">-1</button>
+            <button class="step-chip active" data-reset="0">Reset (0)</button>
+            <button class="step-chip" data-step="+1">+1</button>
+            <button class="step-chip" data-step="+10">+10</button>
+          </div>
+        </div>
+
+        <!-- Step-by-Step Mathematical Formula Breakdown -->
+        <div class="formula-breakdown-card">
+          <div class="formula-header">
+            <div class="formula-title">
+              <span class="formula-icon">📐</span>
+              <h3>Calculation Formula</h3>
+            </div>
+            <span class="formula-badge" id="formula-badge">Formula Applied</span>
+          </div>
+          <div class="formula-body">
+            <div class="formula-equation" id="formula-equation">
+              (°C × 9/5) + 32 = °F
+            </div>
+            <div class="formula-steps" id="formula-steps">
+              (25 × 1.8) + 32 = 45 + 32 = <strong>77.00 °F</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Scientific & Everyday Presets -->
+        <div class="presets-section">
+          <div class="presets-header">
+            <h3 class="presets-title">⚡ Real-World Benchmarks & Presets</h3>
+            <span class="presets-hint">Click to load</span>
+          </div>
+          <div class="presets-grid" id="presets-grid">
+            <button class="preset-btn" data-val="-273.15" data-unit="celsius" data-tag="extreme-cold">
+              <span class="preset-icon">🧊</span>
+              <span class="preset-info">
+                <strong>Absolute Zero</strong>
+                <small>-273.15 °C</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="-195.8" data-unit="celsius" data-tag="extreme-cold">
+              <span class="preset-icon">🧪</span>
+              <span class="preset-info">
+                <strong>Liquid Nitrogen</strong>
+                <small>-195.8 °C</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="-78.5" data-unit="celsius" data-tag="cold">
+              <span class="preset-icon">💨</span>
+              <span class="preset-info">
+                <strong>Dry Ice Sublimation</strong>
+                <small>-78.5 °C</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="0" data-unit="celsius" data-tag="freezing">
+              <span class="preset-icon">❄️</span>
+              <span class="preset-info">
+                <strong>Water Freezing</strong>
+                <small>0.0 °C / 32 °F</small>
+              </span>
+            </button>
+            <button class="preset-btn active" data-val="21" data-unit="celsius" data-tag="room">
+              <span class="preset-icon">🛋️</span>
+              <span class="preset-info">
+                <strong>Room Comfort</strong>
+                <small>21.0 °C / 69.8 °F</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="37" data-unit="celsius" data-tag="body">
+              <span class="preset-icon">❤️</span>
+              <span class="preset-info">
+                <strong>Human Body</strong>
+                <small>37.0 °C / 98.6 °F</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="100" data-unit="celsius" data-tag="boiling">
+              <span class="preset-icon">♨️</span>
+              <span class="preset-info">
+                <strong>Water Boiling</strong>
+                <small>100.0 °C / 212 °F</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="327.5" data-unit="celsius" data-tag="hot">
+              <span class="preset-icon">🔨</span>
+              <span class="preset-info">
+                <strong>Lead Melting Point</strong>
+                <small>327.5 °C / 621.5 °F</small>
+              </span>
+            </button>
+            <button class="preset-btn" data-val="5505" data-unit="celsius" data-tag="plasma">
+              <span class="preset-icon">☀️</span>
+              <span class="preset-info">
+                <strong>Sun's Surface</strong>
+                <small>5,505 °C / 9,941 °F</small>
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Visual Thermometer, All Scales Matrix, & History -->
+      <aside class="visual-sidebar">
+        
+        <!-- Interactive Visual Thermometer Card -->
+        <div class="thermometer-panel glass-panel">
+          <div class="panel-header">
+            <h2 class="section-heading">Thermal Gauge</h2>
+            <span class="thermal-state-tag" id="thermal-state-badge">Comfort Zone</span>
+          </div>
+
+          <div class="thermometer-visual-container">
+            <!-- Dynamic Color Ambiance Tube -->
+            <div class="thermometer-gauge">
+              <div class="thermometer-scale-marks">
+                <span class="scale-mark" style="top: 5%">100°C <span>Boil</span></span>
+                <span class="scale-mark" style="top: 25%">75°C</span>
+                <span class="scale-mark" style="top: 45%">50°C</span>
+                <span class="scale-mark" style="top: 65%">25°C <span>Room</span></span>
+                <span class="scale-mark" style="top: 85%">0°C <span>Freeze</span></span>
+              </div>
+              <div class="thermometer-tube">
+                <div class="thermometer-mercury" id="thermometer-mercury">
+                  <div class="mercury-glow"></div>
+                </div>
+              </div>
+              <div class="thermometer-bulb" id="thermometer-bulb">
+                <div class="bulb-reflection"></div>
+              </div>
+            </div>
+
+            <!-- Thermal Information Readout -->
+            <div class="thermal-readout">
+              <div class="readout-hero">
+                <span class="readout-temp" id="readout-celsius-val">25.0°C</span>
+                <span class="readout-desc" id="readout-description">Pleasant Room Temperature</span>
+              </div>
+              
+              <div class="thermal-stats">
+                <div class="stat-row">
+                  <span class="stat-label">Feeling</span>
+                  <span class="stat-value" id="stat-feeling">Ideal & Cozy</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">State of Water</span>
+                  <span class="stat-value" id="stat-water-state">Liquid Water</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Kinetic Energy</span>
+                  <span class="stat-value" id="stat-kinetic">Standard Motion</span>
+                </div>
+              </div>
+
+              <!-- Quick Action Save to History -->
+              <button id="save-history-btn" class="save-history-btn">
+                <span class="btn-icon">💾</span> Save To History Log
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- All Scales Live Matrix Grid -->
+        <div class="all-scales-panel glass-panel">
+          <div class="panel-header">
+            <h2 class="section-heading">Universal Scales Matrix</h2>
+            <span class="hint-pill">7 Synchronized Scales</span>
+          </div>
+          
+          <div class="scales-grid" id="scales-grid">
+            <div class="scale-card" data-scale="celsius">
+              <span class="scale-name">Celsius</span>
+              <span class="scale-val" id="matrix-celsius">25.00 °C</span>
+            </div>
+            <div class="scale-card" data-scale="fahrenheit">
+              <span class="scale-name">Fahrenheit</span>
+              <span class="scale-val" id="matrix-fahrenheit">77.00 °F</span>
+            </div>
+            <div class="scale-card" data-scale="kelvin">
+              <span class="scale-name">Kelvin</span>
+              <span class="scale-val" id="matrix-kelvin">298.15 K</span>
+            </div>
+            <div class="scale-card" data-scale="rankine">
+              <span class="scale-name">Rankine</span>
+              <span class="scale-val" id="matrix-rankine">536.67 °R</span>
+            </div>
+            <div class="scale-card" data-scale="reaumur">
+              <span class="scale-name">Réaumur</span>
+              <span class="scale-val" id="matrix-reaumur">20.00 °Ré</span>
+            </div>
+            <div class="scale-card" data-scale="newton">
+              <span class="scale-name">Newton</span>
+              <span class="scale-val" id="matrix-newton">8.25 °N</span>
+            </div>
+            <div class="scale-card" data-scale="delisle">
+              <span class="scale-name">Delisle</span>
+              <span class="scale-val" id="matrix-delisle">112.50 °De</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conversion History & Export Panel -->
+        <div class="history-panel glass-panel">
+          <div class="panel-header">
+            <div class="section-title-wrap">
+              <h2 class="section-heading">Conversion History</h2>
+              <span class="history-count-badge" id="history-count">0 items</span>
+            </div>
+            <div class="history-actions">
+              <button id="export-json-btn" class="text-action-btn" title="Export as JSON">JSON</button>
+              <button id="export-csv-btn" class="text-action-btn" title="Export as CSV">CSV</button>
+              <button id="clear-history-btn" class="text-action-btn danger" title="Clear all history">Clear</button>
+            </div>
+          </div>
+
+          <div class="history-list-wrapper">
+            <ul class="history-list" id="history-list">
+              <li class="history-empty-msg">No conversions recorded yet. Perform conversions and click "Save To History Log"!</li>
+            </ul>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+    <!-- Scale Comparison Quick Reference Section -->
+    <section class="reference-section glass-panel">
+      <div class="reference-header">
+        <h2 class="section-heading">📖 Temperature Reference Scale Cheatsheet</h2>
+        <span class="ref-sub">Standard scientific benchmarks across popular thermal metrics</span>
+      </div>
+      <div class="table-responsive">
+        <table class="reference-table">
+          <thead>
+            <tr>
+              <th>Thermal Phenomenon</th>
+              <th>Celsius (°C)</th>
+              <th>Fahrenheit (°F)</th>
+              <th>Kelvin (K)</th>
+              <th>Rankine (°R)</th>
+              <th>Réaumur (°Ré)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Absolute Zero</strong></td>
+              <td class="mono">-273.15</td>
+              <td class="mono">-459.67</td>
+              <td class="mono">0.00</td>
+              <td class="mono">0.00</td>
+              <td class="mono">-218.52</td>
+            </tr>
+            <tr>
+              <td><strong>Liquid Nitrogen Boiling</strong></td>
+              <td class="mono">-195.80</td>
+              <td class="mono">-320.44</td>
+              <td class="mono">77.35</td>
+              <td class="mono">139.23</td>
+              <td class="mono">-156.64</td>
+            </tr>
+            <tr>
+              <td><strong>Water Freezing Point</strong></td>
+              <td class="mono">0.00</td>
+              <td class="mono">32.00</td>
+              <td class="mono">273.15</td>
+              <td class="mono">491.67</td>
+              <td class="mono">0.00</td>
+            </tr>
+            <tr>
+              <td><strong>Standard Room Temperature</strong></td>
+              <td class="mono">21.00</td>
+              <td class="mono">69.80</td>
+              <td class="mono">294.15</td>
+              <td class="mono">529.47</td>
+              <td class="mono">16.80</td>
+            </tr>
+            <tr>
+              <td><strong>Average Human Body</strong></td>
+              <td class="mono">37.00</td>
+              <td class="mono">98.60</td>
+              <td class="mono">310.15</td>
+              <td class="mono">558.27</td>
+              <td class="mono">29.60</td>
+            </tr>
+            <tr>
+              <td><strong>Water Boiling Point (Sea Level)</strong></td>
+              <td class="mono">100.00</td>
+              <td class="mono">212.00</td>
+              <td class="mono">373.15</td>
+              <td class="mono">671.67</td>
+              <td class="mono">80.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p class="footer-copy">
+          Designed with ❤️ for Open Source • <strong>TempFlux Temperature Suite</strong>
+        </p>
+        <p class="footer-shortcuts">
+          <kbd>S</kbd> Swap Units &nbsp;•&nbsp; <kbd>Ctrl</kbd> + <kbd>K</kbd> Clear Input &nbsp;•&nbsp; <kbd>T</kbd> Toggle Theme
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
