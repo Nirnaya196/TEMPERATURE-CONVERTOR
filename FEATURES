@@ -1,0 +1,28 @@
+🌡️ Temperature Converter
+📌 Description
+
+A Temperature Converter is a simple and user-friendly application that allows users to convert temperatures between different measurement units quickly and accurately. The application can convert values between Celsius, Fahrenheit, and Kelvin, making temperature calculations easy and convenient.
+
+This project is useful for students and beginners to understand user input, mathematical formulas, conditional logic, event handling, and interactive user interfaces. It provides instant conversion results whenever the user enters a temperature value and selects the required units.
+
+✨ Features
+🌡️ Multiple Temperature Units – Supports Celsius, Fahrenheit, and Kelvin.
+🔄 Instant Conversion – Converts the entered temperature immediately.
+➕ Celsius to Fahrenheit – Converts °C values into °F.
+➕ Fahrenheit to Celsius – Converts °F values into °C.
+❄️ Celsius to Kelvin – Converts °C values into Kelvin.
+🔥 Kelvin to Celsius – Converts Kelvin values into °C.
+🔁 Fahrenheit to Kelvin – Supports conversion between °F and Kelvin.
+🔄 Kelvin to Fahrenheit – Converts Kelvin values into °F.
+🎯 Accurate Results – Uses standard temperature conversion formulas.
+🧹 Clear/Reset Option – Allows users to reset the input and result fields.
+⚡ Fast Calculation – Displays conversion results quickly.
+🎨 Simple & Clean UI – Easy-to-understand interface for smooth usage.
+📱 Responsive Design – Can be used on different screen sizes.
+🚫 Input Validation – Helps handle empty or invalid input values.
+🧮 Formula-Based Calculation – Uses mathematical conversion formulas to generate results.
+💡 Easy to Use – Designed for quick conversions without complicated steps.
+🚀 Expandable – Can be extended with additional units and conversion options in the future.
+🔥 GitHub Description
+
+A simple and interactive Temperature Converter that converts temperatures between Celsius, Fahrenheit, and Kelvin with accurate results, instant calculations, input validation, and a clean user-friendly interface.
